@@ -1,22 +1,33 @@
 # This is a template for a Ruby scraper on morph.io (https://morph.io)
 # including some code snippets below that you should find helpful
 
-# require 'scraperwiki'
-# require 'mechanize'
-#
-# agent = Mechanize.new
-#
-# # Read in a page
-# page = agent.get("http://foo.com")
-#
-# # Find somehing on the page using css selectors
-# p page.at('div.content')
-#
-# # Write out to the sqlite database using scraperwiki library
-# ScraperWiki.save_sqlite(["name"], {"name" => "susan", "occupation" => "software developer"})
-#
-# # An arbitrary query against the database
-# ScraperWiki.select("* from data where 'name'='peter'")
+require 'scraperwiki'
+require 'mechanize'
+
+agent = Mechanize.new
+
+# Read in a page
+page = agent.get("http://www.rfs.nsw.gov.au/fire-information/fdr-and-tobans")
+table = page.at('table.danger-ratings-table')
+rows = table.at(:tbody).search("tr").map
+
+rows.each do |row|
+  region = {
+    date_scraped: Date.today.to_s,
+    nsw_fire_area: row.search(:td)[0].text,
+    fire_danger_level_today: row.search(:td)[1].text,
+    total_fire_ban_today: row.search(:td)[2].text.strip,
+    fire_danger_level_tomorrow: row.search(:td)[3].text,
+    total_fire_ban_tomorrow: row.search(:td)[4].text,
+    councils_affected: row.search(:td)[5].text.split("; "),
+    scrape_id: Date.today.to_s + "_" + row.search(:td)[0].text.downcase.gsub(" ", "_").gsub("/", "_")
+  }
+
+  p region
+  # # Write out to the sqlite database using scraperwiki library
+  ScraperWiki.save_sqlite(["scrape_id"], region)
+end
+
 
 # You don't have to do things with the Mechanize or ScraperWiki libraries.
 # You can use whatever gems you want: https://morph.io/documentation/ruby
