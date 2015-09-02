@@ -9,9 +9,8 @@ agent = Mechanize.new
 # Read in a page
 page = agent.get("http://www.rfs.nsw.gov.au/fire-information/fdr-and-tobans")
 table = page.at('table.danger-ratings-table')
-rows = table.at(:tbody).search("tr").map
 
-rows.each do |row|
+table.at(:tbody).search("tr").each do |row|
   fire_area = {
     date_scraped: Date.today.to_s,
     nsw_fire_area: row.search(:td)[0].text,
