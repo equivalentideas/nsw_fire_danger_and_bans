@@ -19,13 +19,12 @@ rows.each do |row|
     total_fire_ban_today: row.search(:td)[2].text.strip,
     fire_danger_level_tomorrow: row.search(:td)[3].text,
     total_fire_ban_tomorrow: row.search(:td)[4].text,
-    councils_affected: row.search(:td)[5].text.split("; "),
-    scrape_id: Date.today.to_s + "_" + row.search(:td)[0].text.downcase.gsub(" ", "_").gsub("/", "_")
+    councils_affected: row.search(:td)[5].text.gsub(";", ",")
   }
 
   p region
   # # Write out to the sqlite database using scraperwiki library
-  ScraperWiki.save_sqlite(["scrape_id"], region)
+  ScraperWiki.save_sqlite([:date_scraped, :nsw_fire_area], region)
 end
 
 
