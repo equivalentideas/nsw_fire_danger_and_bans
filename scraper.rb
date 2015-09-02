@@ -10,7 +10,7 @@ agent = Mechanize.new
 page = agent.get('http://www.rfs.nsw.gov.au/fire-information/fdr-and-tobans')
 table = page.at('table.danger-ratings-table')
 
-table.at(:tbody).search('tr').each do |row|
+table.at(:tbody).search(:tr).each do |row|
   fire_area = {
     date_scraped: Date.today.to_s,
     nsw_fire_area: row.search(:td)[0].text,
