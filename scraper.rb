@@ -12,7 +12,7 @@ table = page.at('table.danger-ratings-table')
 rows = table.at(:tbody).search("tr").map
 
 rows.each do |row|
-  region = {
+  fire_area = {
     date_scraped: Date.today.to_s,
     nsw_fire_area: row.search(:td)[0].text,
     fire_danger_level_today: row.search(:td)[1].text,
@@ -22,9 +22,10 @@ rows.each do |row|
     councils_affected: row.search(:td)[5].text.gsub(";", ",")
   }
 
-  p region
+  p fire_area
+
   # # Write out to the sqlite database using scraperwiki library
-  ScraperWiki.save_sqlite([:date_scraped, :nsw_fire_area], region)
+  ScraperWiki.save_sqlite([:date_scraped, :nsw_fire_area], fire_area)
 end
 
 
